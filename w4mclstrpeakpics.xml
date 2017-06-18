@@ -47,20 +47,20 @@
       <param name="variableMetadata_in" value="input_variableMetadata.tsv"/>
       <param name="sampleSelectorColumnName" value="sampleType"/>
       <param name="sampleSelectorValue" value="pool"/>
-      <output name="outputTable">
+	  <output name="outputTable">
         <assert_contents>
-          <has_text text="0.4645721925" />
-          <has_text text="0.1143048128" />
-          <has_text text="0.1310160427" />
-          <has_text text="0.07018716577" />
-          <has_text text="0.06617647058" />
-          <has_text text="0.03843582887" />
-          <has_text text="0.06149732620" />
-          <has_text text="3	26	7.8	0.0260695187165775" />
-          <has_text text="2	29	5.8	0.0193850267379679" />
-          <has_text text="1	25	2.5	0.00835561497326203" />
+          <has_text text="0.464572" />
+          <has_text text="0.114304" />
+          <has_text text="0.131016" />
+          <has_text text="0.0701871" />
+          <has_text text="0.0661764" />
+          <has_text text="0.0384358" />
+          <has_text text="0.0614973" />
+          <has_text text="0.0260695" />
+          <has_text text="0.0193850" />
+          <has_text text="0.00835561" />
         </assert_contents>
-      </output>
+	  </output>
     </test>
   </tests>
 
