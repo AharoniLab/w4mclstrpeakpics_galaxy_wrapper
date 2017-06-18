@@ -31,8 +31,8 @@
     <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, separator: tab" />
     <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata columns, separator: tab" />
     <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata columns, separator: tab" />
-    <param name="sampleSelectorColumnName" label="Selector-column name" type="text" value = "" help="Name of column containing selector values." />
-    <param name="sampleSelectorValue" label="Selector value" type="text" value = "" help="Value to match in sample-selector column." />
+    <param name="sampleSelectorColumnName" label="Selector-column name" type="text" value = "sampleType" help="Name of column containing selector values." />
+    <param name="sampleSelectorValue" label="Selector value" type="text" value = "pool" help="Value to match in sample-selector column." />
   </inputs>
   <outputs>
     <data name="outputTable" label="${tool.name}_${sampleSelectorValue}_table" format="tabular" ></data>
@@ -68,6 +68,210 @@
 
 	<help>
 		<![CDATA[
+
+**Author**	Arthur Eschenlauer (University of Minnesota, esch0041@umn.edu)
+
+--------------------------------------------------------------------------
+
+
+**R package**
+
+The *w4mclstrpeakpics* package is available from the Hegeman lab github repository (https://github.com/HegemanLab/w4mclstrpeakpics/releases).
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+**Tool updates**
+
+See the **NEWS** section at the bottom of this page
+
+---------------------------------------------------
+
+==================================
+Visualize W4M sample-cluster peaks
+==================================
+
+-----------
+Description
+-----------
+
+Produce a figure to assess the similarities and differences among peaks in a cluster of samples using XCMS-preprocessed data files as input.
+
+-----------------
+Workflow Position
+-----------------
+
+  - Upstream tool category: Preprocessing
+  - Downstream tool categories: (Not applicable.)
+
+----------
+Motivation
+----------
+
+GC-MS1 and LC-MS1 experiments seek to resolve chemicals as features that have distinct chromatographic behavior and (after ionization) mass-to-charge ratio. 
+Data for a sample are collected as MS intensities, each of which is associated with a position on a 2D plane with dimensions of m/z ratio and chromatographic retention time.
+Ideally, features would be sufficiently reproducible from sample-run to sample-run to identify features that are commmon among samples and those that differ. 
+However, the chromatographic retention time for a chemical can vary from one run to another.
+In the Workflow4Metabolomics (W4M, [Giacomoni *et al.*, 2014]) "flavor" of Galaxy, the XCMS [Smith *et al.*, 2006] preprocessing tools provide for "retention time correction" to align features among samples.
+
+In a typical GC-MS or LC-MS experiment, a pooled sample is repeatedly injected for quality control.
+Since this is the same mixture for each injection, the identified peaks would be expected to be identical for all injections.
+However, the parameters for peak-picking can exacerbate injection-to-injection variation in performance of the experimental apparatus.
+This tool exists to assess the variation in the peaks picked among pooled samples, replicates, or indeed any cluster of samples.
+
+-----------
+Input files
+-----------
+
++---------------------------+------------+
+| File                      |   Format   |
++===========================+============+
+|     Data matrix           |   tabular  |
++---------------------------+------------+
+|     Sample metadata       |   tabular  |
++---------------------------+------------+
+|     Variable metadata     |   tabular  |
++---------------------------+------------+
+
+
+----------
+Parameters
+----------
+
+Data matrix file
+	| variable x sample **dataMatrix** (tabular separated values) file of the numeric data matrix, with . as decimal, and NA for missing values; the table must not contain metadata apart from row and column names; the row and column names must be identical to the rownames of the sample and variable metadata, respectively (see below)
+	|
+
+Sample metadata file
+	| sample x metadata **sampleMetadata** (tabular separated values) file of the numeric and/or character sample metadata, with . as decimal and NA for missing values
+	|
+
+Variable metadata file
+	| variable x metadata **variableMetadata** (tabular separated values) file of the numeric and/or character variable metadata, with . as decimal and NA for missing values
+	|
+
+Selector-column name (default = "sampleType")
+	| column of W4M/XCMS sampleMetadata holding selector string values.
+	|
+
+Selector value (default = "pool")
+	| value within selector column to identify samples for assessment.
+	|
+
+Include named classes (default = filter-out)
+	| *filter-in* - include only the named sample classes
+	| *filter-out* - exclude only the named sample classes
+	|
+
+
+Column that names the sample-class (default = 'class')
+	| name of the column in sample metadata that has the values to be tested against the 'classes' input parameter
+	|
+
+Column that names the sample (default = 'sampleMetadata')
+	| name of the column in sample metadata that has the name of the sample
+	|
+
+
+------------
+Output files
+------------
+
+
+View Cluster_Peaks_<SelectorName>_figure
+	| (PDF) the output figure, described below.
+	|
+
+View Cluster_Peaks_<SelectorName>_table
+	| (tabular separated values) table of the values plotted in the upper-left graph in the output figure.
+	|
+
+View Cluster_Peaks_<SelectorName>_rdata
+	| (R data) RData containing all processing and plotting intermediates..
+	|
+
+
+------
+Graphs
+------
+
+
+**The "Feature Number and Likelihood" graph**
+
+The upper left graph in the output figure shows the following:
+
+* The X axis reflects the number of samples in which a given feature is present (“the prevalance of a feature among the samples”).
+* For open circles, the Y axis reflects the number of features having the number of samples reflected on the X axis.
+* For solid triangles, the Y axis reflects the relative likelihood of features having the number of samples reflected on the X axis, calculated as
+
+	.. math:: \frac{(number\hspace{1 mm}of\hspace{1 mm}features) (number\hspace{1 mm}of\hspace{1 mm}samples\hspace{1 mm}per\hspace{1 mm}feature)}{maximum(number\hspace{1 mm}of\hspace{1 mm}samples\hspace{1 mm}per\hspace{1 mm}feature)}
+
+Ideally, there would be an upward trend from left to right; if not, XCMS peak-picking parameters may need to be adjusted to suppress low-intensity “noise” peaks or to address peak-splitting.
+
+
+**The "Peak Intensity" graph**
+
+The lower left graph in the output figure presents the data in the upper figure without summarization, so that “the eye” can do the interpretation. It shows the following:
+
+* The X axis reflects the number of samples in which a given feature is present (“the prevalance of a feature among the samples”).
+* The Y axis reflects the intensity each sample for each feature having the number of samples reflected on the X axis.
+
+Ideally, there would be an upward trend from left to right, with more points on the right; if not, XCMS peak-picking parameters may need to be adjusted to suppress low-intensity “noise” peaks or to address peak-splitting.
+
+
+**The "Symbol area/intensity reflect ion intensity" graph**
+
+The upper right graph in the output figure shows the following:
+
+* The X axis reflects the corrected retention time for each feature shown.
+* The Y axis reflects the m/z for each feature shown.
+* Symbol area reflects intensity for a feature for one sample.
+* Overlapping symbols make the overlapping area darker, so the area and darkness reflect the aggregated intensity of a feature. (It is doubtful that a densitometer would be able to recover aggregate intensities accurately from this graph, but philosophically that is how this graph is designed.)
+* The graph is not designed to communicate prevalence of a feature among the samples, but the hue of the symbol reflects the prevalance, albeit subtly.
+
+Consequently, if the graph has a lot of large, dark, blueish symbols for repeated runs of a pooled sample, there is strong evidence that the XCMS peak-picking parameters need adjustment to make peak-picking more consistent.
+
+
+**The "Symbol size/shape reflects prevalence" graph**
+
+By contrast with the area/intensity graph, lower right graph’s primary purpose is to communicate prevalence of a feature among the samples. It`shows the following:
+
+* The X axis reflects the corrected retention time for each feature shown.
+* The Y axis reflects the m/z for each feature shown.
+* Symbol size and shape reflect the prevalence of a feature among the samples.
+* “Vividness” of color reflects the aggregate intensity across all samples for a feature, in an attempt to draw attention to the more intense features.
+
+Consequently, if the graph has a lot of small, vivid symbols for repeated runs of a pooled sample, there is strong evidence that the XCMS peak-picking parameters need adjustment to make peak-picking more consistent.
+
+
+---------------
+Working example
+---------------
+
+**Input files**
+
++-------------------+----------------------------------------------------------------------------------------------------------------+
+| Input File        | Download from URL                                                                                              |
++===================+================================================================================================================+
+| Data matrix       | https://raw.githubusercontent.com/HegemanLab/w4mclstrpeakpics/master/tests/testthat/input_dataMatrix.tsv       |
++-------------------+----------------------------------------------------------------------------------------------------------------+
+| Sample metadata   | https://raw.githubusercontent.com/HegemanLab/w4mclstrpeakpics/master/tests/testthat/input_sampleMetadata.tsv   |
++-------------------+----------------------------------------------------------------------------------------------------------------+
+| Variable metadata | https://raw.githubusercontent.com/HegemanLab/w4mclstrpeakpics/master/tests/testthat/input_variableMetadata.tsv |
++-------------------+----------------------------------------------------------------------------------------------------------------+
+
+**Other input parameters**
+
++------------------------------------+-----------------+
+| Input Parameter                    | Value           |
++====================================+=================+
+| Selector-column name               | sampleType      |
++------------------------------------+-----------------+
+| Selector value                     | pool            |
++------------------------------------+-----------------+
+
+
+
     ]]>
   </help>
   <citations>
