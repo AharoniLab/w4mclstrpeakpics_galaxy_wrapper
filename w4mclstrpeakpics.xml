@@ -47,7 +47,7 @@
       <param name="variableMetadata_in" value="input_variableMetadata.tsv"/>
       <param name="sampleSelectorColumnName" value="sampleType"/>
       <param name="sampleSelectorValue" value="pool"/>
-      <output name="output_assessment.tsv">
+      <output name="outputTable">
         <assert_contents>
           <has_text text="0.4645721925" />
           <has_text text="0.1143048128" />
