@@ -1,0 +1,79 @@
+﻿<tool id="w4mclstrpeakpics" name="View Cluster_Peaks" version="0.98.1">
+  <description>Visualize sample-cluster peaks</description>
+
+  <requirements>
+    <requirement type="package" version="3.3.1">r-base</requirement>
+    <requirement type="package" version="1.1_4">r-batch</requirement>
+    <requirement type="package" version="1.4.2">r-reshape2</requirement>
+    <requirement type="package" version="0.4_10">r-sqldf</requirement>
+  </requirements>
+
+  <stdio>
+    <exit_code range="1:" level="fatal" />
+  </stdio>
+
+
+  <command detect_errors="exit_code"><![CDATA[
+  Rscript $__tool_directory__/w4mclstrpeakpics_wrapper.R
+  data_matrix_path '$dataMatrix_in'
+  variable_metadata_path '$variableMetadata_in'
+  sample_metadata_path '$sampleMetadata_in'
+  sample_selector_column_name '$sampleSelectorColumnName'
+  sample_selector_value '$sampleSelectorValue'
+  output_pdf '$outputFigure'
+  output_tsv '$outputTable'
+  output_rdata '$outputRdata'
+  r_package_archive $__tool_directory__/w4mclstrpeakpics_0.98.1.tar.gz
+  ; echo exit code $?
+  ]]></command>
+
+  <inputs>
+    <param name="dataMatrix_in" label="Data matrix file" type="data" format="tabular" help="variable x sample, decimal: '.', missing: NA, mode: numerical, separator: tab" />
+    <param name="sampleMetadata_in" label="Sample metadata file" type="data" format="tabular" help="sample x metadata columns, separator: tab" />
+    <param name="variableMetadata_in" label="Variable metadata file" type="data" format="tabular" help="variable x metadata columns, separator: tab" />
+    <param name="sampleSelectorColumnName" label="Selector-column name" type="text" value = "" help="Name of column containing selector values." />
+    <param name="sampleSelectorValue" label="Selector value" type="text" value = "" help="Value to match in sample-selector column." />
+  </inputs>
+  <outputs>
+    <data name="outputTable" label="${tool.name}_${sampleSelectorValue}_table" format="tabular" ></data>
+    <data name="outputFigure" label="${tool.name}_${sampleSelectorValue}_figure" format="pdf" ></data>
+    <data name="outputRdata" label="${tool.name}_${sampleSelectorValue}_RData" format="rdata" ></data>
+  </outputs>
+
+  <tests>
+    <test>
+      <param name="dataMatrix_in" value="input_dataMatrix.tsv"/>
+      <param name="sampleMetadata_in" value="input_sampleMetadata.tsv"/>
+      <param name="variableMetadata_in" value="input_variableMetadata.tsv"/>
+      <param name="sampleSelectorColumnName" value="sampleType"/>
+      <param name="sampleSelectorValue" value="pool"/>
+      <output name="output_assessment.tsv">
+        <assert_contents>
+          <has_text text="0.4645721925" />
+          <has_text text="0.1143048128" />
+          <has_text text="0.1310160427" />
+          <has_text text="0.07018716577" />
+          <has_text text="0.06617647058" />
+          <has_text text="0.03843582887" />
+          <has_text text="0.06149732620" />
+          <has_text text="3	26	7.8	0.0260695187165775" />
+          <has_text text="2	29	5.8	0.0193850267379679" />
+          <has_text text="1	25	2.5	0.00835561497326203" />
+        </assert_contents>
+      </output>
+    </test>
+  </tests>
+
+
+
+	<help>
+		<![CDATA[
+    ]]>
+  </help>
+  <citations>
+    <citation type="doi">10.1021/ac051437y</citation>
+    <citation type="doi">10.1093/bioinformatics/btu813</citation>
+  </citations>
+  <!--
+     vim:noet:sw=4:ts=4
+--> </tool>
