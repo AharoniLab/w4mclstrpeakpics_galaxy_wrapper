@@ -1,0 +1,18 @@
+categories: [Metabolomics]
+description: Visualize sample-cluster peaks
+homepage_url: https://github.com/HegemanLab/w4mclstrpeakpics_galaxy_wrapper
+long_description: Produce a figure to assess the similarities and differences among
+  peaks in a cluster of samples using XCMS-preprocessed data files as input.
+name: w4mclstrpeakpics
+owner: eschen42
+remote_repository_url: https://github.com/HegemanLab/w4mclstrpeakpics_galaxy_wrapper/tree/master
+include:
+  - .shed.yml
+  - LICENSE
+  - README
+  - w4mclstrpeakpics.xml
+  - w4mclstrpeakpics_wrapper.R
+  - w4mclstrpeakpics_0.98.1.tar.gz
+  - test-data/input_dataMatrix.tsv
+  - test-data/input_sampleMetadata.tsv
+  - test-data/input_variableMetadata.tsv
