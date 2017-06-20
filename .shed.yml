@@ -12,7 +12,6 @@ include:
   - README
   - w4mclstrpeakpics.xml
   - w4mclstrpeakpics_wrapper.R
-  - w4mclstrpeakpics_0.98.1.tar.gz
   - test-data/input_dataMatrix.tsv
   - test-data/input_sampleMetadata.tsv
   - test-data/input_variableMetadata.tsv

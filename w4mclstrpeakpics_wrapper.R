@@ -26,8 +26,8 @@ library("gsubfn")
 options(gsubfn.engine = "R")
 # end HACK
 
-r_package_archive <- as.character(argVc["r_package_archive"])
-install.packages(r_package_archive, repos = NULL, type = "source")
+#r_package_archive <- as.character(argVc["r_package_archive"])
+#install.packages(r_package_archive, repos = NULL, type = "source")
 suppressMessages( library("w4mclstrpeakpics") )
 
 ## constants
